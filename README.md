@@ -4,7 +4,7 @@
 
 ## WRRC
 
-![WRRC-img](./SPOILER_Untitled_1.jpg)
+![WRRC-img](./wrrcAPI.png)
 
 ## Overview
 
@@ -17,3 +17,7 @@ web browser will be good
 ## Project Features
 
 Just getting starting.
+
+### resource
+
+The Movie Database API : "https://developers.themoviedb.org/"
