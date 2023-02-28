@@ -16,10 +16,13 @@ const PORT = 3000;
 const pg = require('pg');
 //import dotenv
 require('dotenv').config();
+//obj to connect 
+const client=new pg.Client(process.env.DataBaseUrl);
 
-//opening the server for any user
+//middleware functions
 server.use(cors());
-server.use(errorHandler)
+server.use(errorHandler);
+server.use(express.json());
 
 //constructor
 function Movie (title , poster_path , overView){
@@ -43,26 +46,29 @@ function series (id,seasonNumber,episodeNumber,title,overview){
     this.overview = overview;
 }
 //Routes
-//home
-server.get('/',homeHandler);
-//favotite
-server.get('/favorite',favoriteHandler);
-// /trending
-server.get('/trending',trendHandler);
-//search
-server.get('/search',searchHandler);
-// last of Us series episode
-server.get('/lastOfUs',lastHandler);
-//discover movies
-server.get('/discover',discoverHandler);
+server.get('/',homeHandler); //home
+server.get('/favorite',favoriteHandler); //favotite
+server.get('/trending',trendHandler); // /trending
+server.get('/search',searchHandler); //search
+server.get('/lastOfUs',lastHandler); // last of Us series episode
+server.get('/discover',discoverHandler);//discover movies
+server.get('/getMovies',getMoviesHandler);//movies DB
+server.post('/getMovies',postMoviesHandler); //add movie
 //dafault
 server.get('*',(req,res)=>{
     res.status(404).send('No such page');
 })
 //PORT listen
-server.listen(PORT,()=>{
-    console.log(`listening on ${PORT}`);
+client.connect()
+.then(()=>{
+    server.listen(PORT,()=>{
+        console.log(`listening on ${PORT}`);
+    })
 })
+.catch((err)=>{
+    errorHandler(err,req,res);
+})
+
 
 //handler functions
 //home handler
@@ -164,6 +170,52 @@ catch(err){
 catch(err){
     errorHandler(err,req,res);
 }
+}
+function getMoviesHandler (req,res){
+    try{
+    const sql = `SELECT * FROM moviestable`
+    client.query(sql)
+    .then((data)=>{
+        res.send(data.rows)
+    })
+    .catch((err)=>{
+        errorHandler(err,req,res);
+    })
+}
+catch(err){
+    errorHandler(err,req,res);
+}
+}   
+function postMoviesHandler (req,res){
+    try{
+        const movies = req.body
+        if(movies.length != undefined ){
+            JSON.parse(movies).map((item)=>{
+                const sql =`INSERT INTO moviestable (title, poster_path, overview,personalComments)
+                VALUES (item.title,item.poster_path,item.overview,item.personalComments);`
+                client.query(sql)
+            })
+            .then((data)=>{
+                res.send('posted')
+            })
+            .catch((err)=>{
+                errorHandler(err,req,res);
+            })
+        }else{
+            const sql =`INSERT INTO moviestable (title, poster_path, overview,personalComments)
+                VALUES (movies.title,movies.poster_path,movies.overview,movies.personalComments);`
+                client.query(sql)
+                .then((data)=>{
+                    res.send('posted')
+                })
+                .catch((err)=>{
+                    errorHandler(err,req,res);
+                })
+        }
+    }
+    catch(err){
+        errorHandler(err,req,res);
+    }
 }
 //error handler
 function errorHandler (err,req,res,next){
