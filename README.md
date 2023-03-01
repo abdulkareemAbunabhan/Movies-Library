@@ -4,7 +4,7 @@
 
 ## WRRC
 
-![WRRC-img](./wrrcAPI.png)
+![WRRC-img](./wrrcnew.png)
 
 ## Overview
 
