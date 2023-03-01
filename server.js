@@ -188,30 +188,32 @@ catch(err){
 }   
 function postMoviesHandler (req,res){
     try{
-        const movies = req.body
-        if(movies.length != undefined ){
-            JSON.parse(movies).map((item)=>{
-                const sql =`INSERT INTO moviestable (title, poster_path, overview,personalComments)
-                VALUES (item.title,item.poster_path,item.overview,item.personalComments);`
-                client.query(sql)
-            })
-            .then((data)=>{
-                res.send('posted')
-            })
-            .catch((err)=>{
-                errorHandler(err,req,res);
-            })
-        }else{
+        // if(movies.length != undefined ){
+        //     JSON.parse(movies).map((item)=>{
+        //         const sql =`INSERT INTO moviestable (title, poster_path, overview,personalComments)
+        //         VALUES ($1,$2,$3,$4) RETURNING *;`
+        //     let values = [item.title,item.poster_path,item.overview,item.personalComments]
+        //         client.query(sql,values)
+        //     })
+        //     .then((data)=>{
+        //         res.send('posted')
+        //     })
+        //     .catch((err)=>{
+        //         errorHandler(err,req,res);
+        //     })
+        // }else{
+            const movies = req.body
             const sql =`INSERT INTO moviestable (title, poster_path, overview,personalComments)
-                VALUES (movies.title,movies.poster_path,movies.overview,movies.personalComments);`
-                client.query(sql)
+                VALUES ($1,$2,$3,$4) RETURNING *;`
+            let values = [movies.title,movies.poster_path,movies.overview,movies.personalComments]
+                client.query(sql,values)
                 .then((data)=>{
                     res.send('posted')
                 })
                 .catch((err)=>{
                     errorHandler(err,req,res);
                 })
-        }
+            // }
     }
     catch(err){
         errorHandler(err,req,res);
