@@ -4,19 +4,19 @@
 
 ## WRRC
 
-![WRRC-img](./wrrcnew.png)
+![WRRC-img](./CRUDwrrc.png)
 
 ## Overview
 
-this application is tracking the new movies from all categries.
+this application is tracking the new movies from all catogries.
 
 ## Getting Started
 
-web browser will be good
+You will a client that can swnd requests from diffrent types like: postman or thunderClient ...
 
 ## Project Features
 
-Just getting starting.
+added new routes so you can add and edit on a movie and delete from the list by using id for each movie;
 
 ### resource
 
