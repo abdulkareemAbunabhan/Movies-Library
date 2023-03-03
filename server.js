@@ -14,6 +14,7 @@ const movie = require('./data.json')
 const PORT = 3000;
 //import the pg
 const pg = require('pg');
+const { query } = require('express');
 //import dotenv
 require('dotenv').config();
 //obj to connect 
@@ -54,6 +55,9 @@ server.get('/lastOfUs',lastHandler); // last of Us series episode
 server.get('/discover',discoverHandler);//discover movies
 server.get('/getMovies',getMoviesHandler);//movies DB
 server.post('/getMovies',postMoviesHandler); //add movie
+server.put('/getMovies/:id',updateHandlar)//update movie
+server.delete('/getMovies/:id',deleteHandler)//delete movie
+server.get('/getMovies/:id',getById)//get by id
 //dafault
 server.get('*',(req,res)=>{
     res.status(404).send('No such page');
@@ -66,7 +70,7 @@ client.connect()
     })
 })
 .catch((err)=>{
-    errorHandler(err,req,res);
+    errorHandler(err);
 })
 
 
@@ -173,8 +177,14 @@ catch(err){
 }
 function getMoviesHandler (req,res){
     try{
-    const sql = `SELECT * FROM moviestable`
-    client.query(sql)
+    const id = req.params.id ;    
+        if(id == undefined){
+        var sql = `SELECT * FROM moviestable`
+        }else{
+            var sql =`SELECT title=$1, poster_path=$2, overview=$3, personalComments=$4 FROM moviestable WHERE id=${id} RETURNING * ;`
+            var values = [req.body.title,req.body.poster_path,req.body.overview,req.body.personalComments];
+        }
+    client.query(sql,values)
     .then((data)=>{
         res.send(data.rows)
     })
@@ -218,6 +228,28 @@ function postMoviesHandler (req,res){
     catch(err){
         errorHandler(err,req,res);
     }
+}
+function updateHandlar(req,res){
+    const id = req.params.id ;
+    const sql =`UPDATE moviestable SET title=$1, poster_path=$2, overview=$3, personalComments=$4 WHERE id=${id} RETURNING * ;`
+    let values = [req.body.title,req.body.poster_path,req.body.overview,req.body.personalComments];
+    client.query(sql,values)
+    .then((data)=>res.send("updated"))
+    .catch((err)=>errorHandler(err,req,res))
+}
+function deleteHandler(req,res){
+    const id = req.params.id;
+    const sql = `DELETE FROM moviestable WHERE id=${id} ;`
+    client.query(sql)
+    .then((data)=>res.send("removed"))
+    .catch((err)=>errorHandler(err,req,res))
+}
+function getById(req,res){
+    const id = req.params.id;
+    const sql = `SELECT * FROM moviestable WHERE id=${id};`
+    client.query(sql)
+    .then((data)=>res.send(data.rows))
+    .catch((err)=>errorHandler(err,req,res))
 }
 //error handler
 function errorHandler (err,req,res,next){
