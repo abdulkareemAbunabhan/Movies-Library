@@ -11,7 +11,7 @@ const server = express();
 //importing data.json
 const movie = require('./data.json')
 //PORT 
-const PORT = 3000;
+const PORT = process.env.PORT;
 //import the pg
 const pg = require('pg');
 const { query } = require('express');
