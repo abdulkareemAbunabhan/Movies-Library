@@ -55,9 +55,9 @@ server.get('/lastOfUs',lastHandler); // last of Us series episode
 server.get('/discover',discoverHandler);//discover movies
 server.get('/getMovies',getMoviesHandler);//movies DB
 server.post('/getMovies',postMoviesHandler); //add movie
-server.put('/getMovies/:id',updateHandlar)//update movie
-server.delete('/getMovies/:id',deleteHandler)//delete movie
-server.get('/getMovies/:id',getById)//get by id
+server.put('/UPDATE/:id',updateHandlar)//update movie
+server.delete('/DELETE/:id',deleteHandler)//delete movie
+server.get('/getMovie/:id',getById)//get by id
 //dafault
 server.get('*',(req,res)=>{
     res.status(404).send('No such page');
@@ -231,8 +231,8 @@ function postMoviesHandler (req,res){
 }
 function updateHandlar(req,res){
     const id = req.params.id ;
-    const sql =`UPDATE moviestable SET title=$1, poster_path=$2, overview=$3, personalComments=$4 WHERE id=${id} RETURNING * ;`
-    let values = [req.body.title,req.body.poster_path,req.body.overview,req.body.personalComments];
+    const sql =`UPDATE moviestable SET personalComments=$1 WHERE id=${id} RETURNING * ;`
+    let values = [req.body.personalComments];
     client.query(sql,values)
     .then((data)=>res.send("updated"))
     .catch((err)=>errorHandler(err,req,res))
