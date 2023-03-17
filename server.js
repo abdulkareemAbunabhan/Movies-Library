@@ -54,7 +54,7 @@ server.get('/search',searchHandler); //search
 server.get('/lastOfUs',lastHandler); // last of Us series episode
 server.get('/discover',discoverHandler);//discover movies
 server.get('/getMovies',getMoviesHandler);//movies DB
-server.post('/getMovies',postMoviesHandler); //add movie
+server.post('/addMovies',postMoviesHandler); //add movie
 server.put('/UPDATE/:id',updateHandlar)//update movie
 server.delete('/DELETE/:id',deleteHandler)//delete movie
 server.get('/getMovie/:id',getById)//get by id
